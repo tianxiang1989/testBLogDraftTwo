@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#e6e6e6"
+    android:orientation="vertical" >
+
+    <!-- 进入时不获取焦点 -->
+
+    <LinearLayout
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:focusable="true"
+        android:focusableInTouchMode="true" >
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="100dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical" 
+            android:textColor="@android:color/black"
+            >
+
+            <EditText
+                android:id="@+id/fromblogid"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="转发自微博的ID" 
+                
+                >
+            </EditText>
+
+            <EditText
+                android:id="@+id/puserid"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="发博人的ID" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/pcon"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="微博的内容" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/zb"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="指标信息" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/atname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="微博的at信息 @对象" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/atid"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="微博的at信息ID" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/htname"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="话题信息：名称" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/htid"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="话题信息：ID" >
+            </EditText>
+
+            <EditText
+                android:id="@+id/anlikey"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="案例信息" >
+            </EditText>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        >
+
+        <Button
+            android:id="@+id/send_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:text="发送" />
+
+        <Button
+            android:id="@+id/update_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:text="更新并退出" 
+            android:visibility="visible"
+            />
+    </LinearLayout>
+
+</LinearLayout>

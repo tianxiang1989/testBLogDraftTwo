@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout
+            android:id="@+id/re"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center_vertical"
+            android:background="#fff"
+            android:paddingBottom="6dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="5dp">
+            
+            <ImageView
+                android:id="@+id/head"
+                android:layout_width="30dp"
+		        android:layout_height="30dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="5dp"
+                android:background="@drawable/drafts_resend_icon"
+                 />
+
+            <TextView
+                android:id="@+id/name_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/head"
+                android:padding="7dp"
+                android:text="微博"
+                android:textColor="#000" />
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:maxEms="10" 
+                android:singleLine="true"
+                android:padding="7dp"
+                android:text="日期"
+                android:textColor="#666" />
+             <TextView
+                android:id="@+id/content_text"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/head"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentBottom="true"
+                android:padding="3dp"
+                android:maxEms="10" 
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="发件内容"
+                android:textColor="#666" />
+
+             <TextView
+                 android:id="@+id/text"
+                 android:layout_width="20dp"
+                 android:layout_height="20dp"
+                 android:layout_marginRight="10dp"
+                 android:layout_alignParentRight="true"
+                 android:layout_below="@+id/time"
+                 android:gravity="center_horizontal|center_vertical"
+                 android:text="2"
+                 android:textColor="#ffffff"
+                 android:textSize="10dp"
+                 android:textStyle="bold"
+                 android:visibility="gone" />
+            
+        </RelativeLayout>
+    
+
+</LinearLayout>
