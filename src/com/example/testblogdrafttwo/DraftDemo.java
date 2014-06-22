@@ -66,6 +66,8 @@ public class DraftDemo extends Activity implements
 		draftList.setEmptyView(emptyView);
 	}
 
+	
+	private DraftListAdapter myAdapter;
 	/**
 	 * 1 初始化组件 2  增加点击事件
 	 */
@@ -73,7 +75,10 @@ public class DraftDemo extends Activity implements
 		draftDB = new TodoDB(this);
 		mCursor = draftDB.select();
 		draftList = (ListView) findViewById(R.id.draftlist);
-		draftList.setAdapter(new DraftListAdapter(this, mCursor));
+//		draftList.setAdapter(new DraftListAdapter(this, mCursor));
+		myAdapter=new DraftListAdapter(this, mCursor);
+		draftList.setAdapter(myAdapter);
+		
 		draftList.setOnItemClickListener(this);
 		draftList.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
@@ -100,6 +105,7 @@ public class DraftDemo extends Activity implements
 								draftDB.delete(Integer.parseInt(deleteIndex));
 								mCursor.requery();
 								draftList.invalidateViews();
+								myAdapter.notifyDataSetChanged();
 							}
 						})
 				.setNegativeButton("取消",
@@ -141,6 +147,7 @@ public class DraftDemo extends Activity implements
 	private void refresh() {
 		mCursor.requery();
 		draftList.invalidateViews();
+		myAdapter.notifyDataSetChanged();
 	}
 
 	/**
@@ -251,6 +258,7 @@ public class DraftDemo extends Activity implements
 		draftDB.delete(Integer.parseInt(index));
 		mCursor.requery();
 		draftList.invalidateViews();
+		myAdapter.notifyDataSetChanged();
 	}
 	
 	/**DraftListAdapter中用到*/
