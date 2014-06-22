@@ -253,7 +253,7 @@ public class DraftDemo extends Activity implements
 		draftList.invalidateViews();
 	}
 	
-	/**BooksListAdapter中用到*/
+	/**DraftListAdapter中用到*/
 	public final class ViewHolder {
 		public LinearLayout img;
 		public TextView content_text;
