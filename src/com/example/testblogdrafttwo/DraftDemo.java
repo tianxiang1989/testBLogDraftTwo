@@ -1,78 +1,115 @@
 package com.example.testblogdrafttwo;
 
-import java.text.SimpleDateFormat;
-
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * draft列表
+ * @author liuxiuquan
+ * 2014年6月22日
+ */
 public class DraftDemo extends Activity implements
 		AdapterView.OnItemClickListener {
+	/**数据库工具类*/
 	private TodoDB draftDB;
 	private Cursor mCursor;
-	// /**转发自微博的ID输入框*/
-	// private EditText fromblogidEdit;
-	// /**发博人的ID输入框*/
-	// private EditText puseridEdit;
-	// /**微博的内容输入框*/
-	// private EditText pconEdit;
-	// /**指标信息输入框*/
-	// private EditText zbEdit;
-	// /**微博的at信息 @对象输入框*/
-	// private EditText atnameEdit;
-	// /**微博的at信息ID @id 输入框*/
-	// private EditText atidEdit;
-	// /**话题信息：名称 输入框*/
-	// private EditText htnameEdit;
-	// /**话题信息：ID 输入框*/
-	// private EditText htidEdit;
-	// /**案例信息 输入框*/
-	// private EditText anlikeyEdit;
 	/**微博列表*/
-	private ListView blogList;
-
-	private int BLOG_KEY_ID = 0;
+	private ListView draftList;
+	/**长按删除的主键号*/
+	String deleteIndex;
 	protected final static int MENU_ADD = Menu.FIRST;
-	protected final static int MENU_DELETE = Menu.FIRST + 1;
-	protected final static int MENU_UPDATE = Menu.FIRST + 2;
+	protected final static int MENU_REFRESH = Menu.FIRST + 1;
+	private Activity context;
 
+	/**Called when the activity is starting*/
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		context = DraftDemo.this;
+		// 初始化组件，添加事件
 		setUpViews();
+		// 设置列表空的提示信息
+		setEmptyView();
 	}
 
+	/**
+	 * 设置列表空的提示信息
+	 */
+	public void setEmptyView() {
+		TextView emptyView = new TextView(this);
+		emptyView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT));
+		emptyView.setText("列表为空！");
+		emptyView.setTextSize(30);
+		emptyView.setVisibility(View.GONE);
+		ViewGroup viewGroup = (ViewGroup) draftList.getParent();
+		viewGroup.addView(emptyView);
+		draftList.setEmptyView(emptyView);
+	}
+
+	/**
+	 * 1 初始化组件 2  增加点击事件
+	 */
 	public void setUpViews() {
 		draftDB = new TodoDB(this);
 		mCursor = draftDB.select();
-		//
-		// fromblogidEdit = (EditText) findViewById(R.id.fromblogid);
-		// puseridEdit = (EditText) findViewById(R.id.puserid);
-		// pconEdit = (EditText) findViewById(R.id.pcon);
-		// zbEdit = (EditText) findViewById(R.id.zb);
-		// atnameEdit = (EditText) findViewById(R.id.atname);
-		// atidEdit = (EditText) findViewById(R.id.atid);
-		// htnameEdit = (EditText) findViewById(R.id.htname);
-		// htidEdit = (EditText) findViewById(R.id.htid);
-		// anlikeyEdit = (EditText) findViewById(R.id.anlikey);
-		//
-		blogList = (ListView) findViewById(R.id.bookslist);
-		blogList.setAdapter(new BooksListAdapter(this, mCursor));
-		blogList.setOnItemClickListener(this);
+		draftList = (ListView) findViewById(R.id.draftlist);
+		draftList.setAdapter(new DraftListAdapter(this, mCursor));
+		draftList.setOnItemClickListener(this);
+		draftList.setOnItemLongClickListener(new OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				mCursor.moveToPosition(arg2);
+				deleteIndex = mCursor.getString(0);
+				ConfirmDelete();
+				return true;
+			}
+		});
+	}
+
+	/**确认删除对话框*/
+	private void ConfirmDelete() {
+		new AlertDialog.Builder(context)
+				.setMessage("真的要删除吗？")
+				.setPositiveButton("确定",
+						new android.content.DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Toast.makeText(context, "确认删除",
+										Toast.LENGTH_SHORT).show();
+								draftDB.delete(Integer.parseInt(deleteIndex));
+								mCursor.requery();
+								draftList.invalidateViews();
+							}
+						})
+				.setNegativeButton("取消",
+						new android.content.DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Toast.makeText(context, "取消删除",
+										Toast.LENGTH_SHORT).show();
+							}
+						}).show();
 	}
 
 	/**菜单内容*/
@@ -80,8 +117,7 @@ public class DraftDemo extends Activity implements
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MENU_ADD, 0, "ADD");
-		// menu.add(Menu.NONE, MENU_DELETE, 0, "DELETE");
-		// menu.add(Menu.NONE, MENU_UPDATE, 0, "UPDATE");
+		menu.add(Menu.NONE, MENU_REFRESH, 0, "REFRESH");
 		return true;
 	}
 
@@ -92,165 +128,55 @@ public class DraftDemo extends Activity implements
 		case MENU_ADD:
 			add();
 			break;
-		// case MENU_DELETE:
-		// delete();
-		// break;
-		// case MENU_UPDATE:
-		// update();
-		// break;
+		case MENU_REFRESH:
+			refresh();
+			break;
 		}
 		return true;
 	}
 
+	/**
+	 * 刷新列表
+	 */
+	private void refresh() {
+		mCursor.requery();
+		draftList.invalidateViews();
+	}
+
+	/**
+	 * 进入增加操作
+	 */
 	public void add() {
-		// String fromblogid = fromblogidEdit.getText().toString();
-		// String puserid = puseridEdit.getText().toString();
-		// String pcon = pconEdit.getText().toString();
-		// String zb = zbEdit.getText().toString();
-		// String atname = atnameEdit.getText().toString();
-		// String atid = atidEdit.getText().toString();
-		// String htname = htnameEdit.getText().toString();
-		// String htid = htidEdit.getText().toString();
-		// String anlikey = anlikeyEdit.getText().toString();
-		//
-		// if (pcon.equals("") ) {
-		// Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
-		// return;
-		// }
-		// /**添加时间*/
-		// SimpleDateFormat sDateFormat = new SimpleDateFormat(
-		// "MM-dd hh:mm:ss");
-		// String time = sDateFormat.format(new java.util.Date());
-		//
-		// mBooksDB.insert(fromblogid, puserid, pcon, zb, atname, atid, htname, htid, anlikey, time);
-		// mCursor.requery();
-		// blogList.invalidateViews();
-		//
-		// fromblogidEdit.setText("");
-		// puseridEdit.setText("");
-		// pconEdit.setText("");
-		// zbEdit.setText("");
-		// atnameEdit.setText("");
-		// atidEdit.setText("");
-		// htnameEdit.setText("");
-		// htidEdit.setText("");
-		// anlikeyEdit.setText("");
-
-		Toast.makeText(this, "Add Successed!", Toast.LENGTH_SHORT).show();
-
-		// Log.v(this.getClass().getName().substring(0, this.getClass().getName().lastIndexOf('$')), "This is Verbose.");
-		// Log.v(this.getClass().getName().lastIndexOf('$') > 0 ? this.getClass()
-		// .getName()
-		// .substring(0, this.getClass().getName().lastIndexOf('$'))
-		// : this.getClass().getName(), "This is Verbose.");
-		Log.v(getClassName(), "This is Verbose..");
-		Log.d(Thread.currentThread().getStackTrace()[2].getMethodName(),
-				"This is Debug.");
-
+		Toast.makeText(this, "点击add，进入增加列表", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.setClass(DraftDemo.this, ListItem.class);
-		/*new一个Bundle对象，并将要传递的数据传入*/
-		// Bundle bundle = new Bundle();
-		// bundle.putDouble("height",height);
-		// bundle.putString("sex",sex);
-		// //传递对象
-		// UserBean us=new UserBean();
-		// us.setUsername("tom");
-		// us.setAge(17);
-		// bundle.putSerializable("us", us);
-		// /*将Bundle对象assign给Intent*/
-		// intent.putExtras(bundle);
-		/*调用Activity EX03_10_1*/
 		startActivity(intent);
-		// finish();
+		finish();
 	}
 
-	public String getClassName() {
-		String className = this.getClass().getName().lastIndexOf('$') > 0 ? this
-				.getClass().getName()
-				.substring(0, this.getClass().getName().lastIndexOf('$'))
-				: this.getClass().getName();
-		return className;
-	}
-
-	// public void delete() {
-	// if (BLOG_KEY_ID == 0) {
-	// return;
-	// }
-	// mBooksDB.delete(BLOG_KEY_ID);
-	// mCursor.requery();
-	// blogList.invalidateViews();
-	// fromblogidEdit.setText("");
-	// puseridEdit.setText("");
-	// pconEdit.setText("");
-	// zbEdit.setText("");
-	// atnameEdit.setText("");
-	// atidEdit.setText("");
-	// htnameEdit.setText("");
-	// htidEdit.setText("");
-	// anlikeyEdit.setText("");
-	// Toast.makeText(this, "Delete Successed!", Toast.LENGTH_SHORT).show();
-	// }
-
-	// public void update() {
-	// // Toast.makeText(this, "进入update()", Toast.LENGTH_SHORT).show();
-	// String fromblogid = fromblogidEdit.getText().toString();
-	// String puserid = puseridEdit.getText().toString();
-	// String pcon = pconEdit.getText().toString();
-	// String zb = zbEdit.getText().toString();
-	// String atname = atnameEdit.getText().toString();
-	// String atid = atidEdit.getText().toString();
-	// String htname = htnameEdit.getText().toString();
-	// String htid = htidEdit.getText().toString();
-	// String anlikey = anlikeyEdit.getText().toString();
-	// // 内容字段不能为空
-	// if (pcon.equals("") ) {
-	// Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
-	// return;
-	// }
-	// SimpleDateFormat sDateFormat = new SimpleDateFormat(
-	// "MM-dd hh:mm:ss");
-	// String time = sDateFormat.format(new java.util.Date());
-	// mBooksDB.update(BLOG_KEY_ID, fromblogid, puserid, pcon, zb, atname, atid, htname, htid, anlikey, time);
-	// mCursor.requery();
-	// blogList.invalidateViews();
-	// fromblogidEdit.setText("");
-	// puseridEdit.setText("");
-	// pconEdit.setText("");
-	// zbEdit.setText("");
-	// atnameEdit.setText("");
-	// atidEdit.setText("");
-	// htnameEdit.setText("");
-	// htidEdit.setText("");
-	// anlikeyEdit.setText("");
-	// Toast.makeText(this, "Update Successed!", Toast.LENGTH_SHORT).show();
-	// }
-
+	/**每一个item的点击事件*/
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
-
-		Toast.makeText(this, "点击了" + position, Toast.LENGTH_SHORT).show();
-		//move到对应的行
+		Toast.makeText(this, "点击了位置" + position, Toast.LENGTH_SHORT).show();
+		// move到对应的行
 		mCursor.moveToPosition(position);
 		Intent intent = new Intent();
 		intent.setClass(DraftDemo.this, ListItem.class);
-		 /*new一个Bundle对象，并将要传递的数据传入*/
 		Bundle bundle = new Bundle();
 		DraftBean draftBean = new DraftBean();
 		draftBean = new DraftBean(mCursor);
-
 		bundle.putSerializable("draftBean", draftBean);
 		intent.putExtras(bundle);
 		startActivity(intent);
 	}
 
-	public class BooksListAdapter extends BaseAdapter {
-		private Context mContext;
+	public class DraftListAdapter extends BaseAdapter {
 		private Cursor mCursor;
+		private LayoutInflater mInflater;
 
-		public BooksListAdapter(Context context, Cursor cursor) {
-			mContext = context;
+		public DraftListAdapter(Context context, Cursor cursor) {
+			this.mInflater = LayoutInflater.from(context);
 			mCursor = cursor;
 		}
 
@@ -271,13 +197,22 @@ public class DraftDemo extends Activity implements
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			LinearLayout ll = null;
-			ll = (LinearLayout) View.inflate(DraftDemo.this, R.layout.vlist2,
-					null);
 			mCursor.moveToPosition(position);
-			TextView content_text = (TextView) ll
-					.findViewById(R.id.content_text);
-			TextView info_text = (TextView) ll.findViewById(R.id.time_text);
+
+			ViewHolder holder = null;
+			if (convertView == null) {
+				holder = new ViewHolder();
+				convertView = mInflater.inflate(R.layout.draft_single, null);
+				holder.img = (LinearLayout) convertView
+						.findViewById(R.id.leftSend);
+				holder.content_text = (TextView) convertView
+						.findViewById(R.id.content_text);
+				holder.time_text = (TextView) convertView
+						.findViewById(R.id.time_text);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
 			// 左下角显示的内容
 			StringBuffer sb = new StringBuffer();
 			sb.append(mCursor.getString(1)).append(mCursor.getString(2))
@@ -286,12 +221,42 @@ public class DraftDemo extends Activity implements
 					.append(mCursor.getString(7)).append(mCursor.getString(8))
 					.append(mCursor.getString(9));
 			String sbString = sb.toString();
-			content_text.setText(sbString);
-			info_text.setText(mCursor.getString(10));
-			Log.d("--SQLiteDatabaseDemo getView--", "mCursor.getString(2)=="
-					+ mCursor.getString(2));
-			return ll;
-		}
+			holder.content_text.setText(sbString);
+			holder.time_text.setText(mCursor.getString(10));
+			// img的onClick中会用到
+			holder.img.setTag(mCursor.getString(0));
+			holder.img.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String index = v.getTag().toString();
+					Toast.makeText(DraftDemo.this, "发送" + index,
+							Toast.LENGTH_SHORT).show();
+					submit(index) ;
+					
+				}
+			});
 
+			return convertView;
+		}
+	}
+
+	/**
+	 * 提交
+	 */
+	private void submit(String index) {
+		if (null == index) {
+			return;
+		}
+		//TODO_LXQ 发送
+		draftDB.delete(Integer.parseInt(index));
+		mCursor.requery();
+		draftList.invalidateViews();
+	}
+	
+	/**BooksListAdapter中用到*/
+	public final class ViewHolder {
+		public LinearLayout img;
+		public TextView content_text;
+		public TextView time_text;
 	}
 }

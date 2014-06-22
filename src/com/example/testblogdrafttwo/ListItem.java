@@ -1,6 +1,9 @@
 package com.example.testblogdrafttwo;
 
+import java.text.SimpleDateFormat;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,12 +13,13 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 /**
+ * Draft对应一行数据，修改和增加操作
  * @author liuxiuquan
  * 2014年6月20日
  */
 public class ListItem extends Activity {
 	/**转发自微博的ID输入框*/
-	private EditText fromblogidEdit; 
+	private EditText fromblogidEdit;
 	/**发博人的ID输入框*/
 	private EditText puseridEdit;
 	/**微博的内容输入框*/
@@ -41,11 +45,15 @@ public class ListItem extends Activity {
 	Activity context;
 	/**主键*/
 	private String key_id;
-
+	/**数据库工具类*/
+	private TodoDB draftDB;
+	/**时间格式*/
+	private SimpleDateFormat sDateFormat;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.item);
+		setContentView(R.layout.draft_detail);
+		sDateFormat = new SimpleDateFormat("MM-dd hh:mm:ss");
 		context = ListItem.this;
 		initId();
 		setIdClick();
@@ -66,21 +74,101 @@ public class ListItem extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(context, "进入点击判断", Toast.LENGTH_SHORT).show();
 			switch (v.getId()) {
 			case R.id.send_btn:
 				Toast.makeText(context, "点击发送", Toast.LENGTH_SHORT).show();
-				
+				submit();
 				break;
 			case R.id.update_btn:
 				Toast.makeText(context, "点击更新", Toast.LENGTH_SHORT).show();
-				
+				update();
 				break;
 			default:
 				break;
 			}
 		}
 	};
+
+	/**
+	 * 提交
+	 */
+	private void submit() {
+		if (null == key_id) {
+			Toast.makeText(context, "发送失败", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		//TODO_LXQ 发送
+		draftDB.delete(Integer.parseInt(key_id));
+		Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent();
+		intent.setClass(ListItem.this, DraftDemo.class);
+		startActivity(intent);
+		finish();
+	}
+
+	/**
+	 * 保存
+	 */
+	protected void save() {
+		String fromblogid = fromblogidEdit.getText().toString();
+		String puserid = puseridEdit.getText().toString();
+		String pcon = pconEdit.getText().toString();
+		String zb = zbEdit.getText().toString();
+		String atname = atnameEdit.getText().toString();
+		String atid = atidEdit.getText().toString();
+		String htname = htnameEdit.getText().toString();
+		String htid = htidEdit.getText().toString();
+		String anlikey = anlikeyEdit.getText().toString();
+		
+		if (pcon.equals("") ) {
+			Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		/**添加时间*/
+		String time = sDateFormat.format(new java.util.Date());
+		draftDB.insert(fromblogid, puserid, pcon, zb, atname, atid, htname, htid, anlikey, time);
+		Toast.makeText(this, "Add Successed!", Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent();
+		intent.setClass(ListItem.this, DraftDemo.class);
+		startActivity(intent);
+		finish();
+	}
+
+	/**
+	 * 更新
+	 */
+	protected void update() {
+		//主键为空进行保存
+		if (null == key_id) {
+			Toast.makeText(context, "提交保存", Toast.LENGTH_SHORT).show();
+			save();
+			return;
+		}
+		//主键不为空进行更新
+		String fromblogid = fromblogidEdit.getText().toString();
+		String puserid = puseridEdit.getText().toString();
+		String pcon = pconEdit.getText().toString();
+		String zb = zbEdit.getText().toString();
+		String atname = atnameEdit.getText().toString();
+		String atid = atidEdit.getText().toString();
+		String htname = htnameEdit.getText().toString();
+		String htid = htidEdit.getText().toString();
+		String anlikey = anlikeyEdit.getText().toString();
+		// 内容字段不能为空
+		if (pcon.equals("")) {
+			Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		//更新时间
+		String time = sDateFormat.format(new java.util.Date());
+		draftDB.update(Integer.parseInt(key_id), fromblogid, puserid, pcon, zb,
+				atname, atid, htname, htid, anlikey, time);
+		Toast.makeText(this, "Update Successed!", Toast.LENGTH_SHORT).show();
+		Intent intent = new Intent();
+		intent.setClass(ListItem.this, DraftDemo.class);
+		startActivity(intent);
+		finish();
+	}
 
 	/**
 	 * 初始化组件
@@ -116,6 +204,8 @@ public class ListItem extends Activity {
 			htidEdit.setText(draftBean.getHtid());
 			anlikeyEdit.setText(draftBean.getAnlikey());
 		}
+		//数据库工具类
+		draftDB = new TodoDB(this);
 	}
 
 }

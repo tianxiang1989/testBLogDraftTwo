@@ -1,7 +1,5 @@
 package com.example.testblogdrafttwo;
 
-import java.text.SimpleDateFormat;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -9,7 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * draft工具类
+ * @author liuxiuquan
+ * 2014年6月22日
+ */
 public class TodoDB extends SQLiteOpenHelper {
+	/**数据库名称*/
 	private final static String DATABASE_NAME = "BLOG.db";
 	private final static int DATABASE_VERSION = 1;
 	private final static String TABLE_NAME = "blog_draft";
@@ -66,6 +70,7 @@ public class TodoDB extends SQLiteOpenHelper {
 		db.execSQL(sql);
 	}
 
+	/**更新*/
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		String sql = "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -73,6 +78,7 @@ public class TodoDB extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
+	/**查询全部*/
 	public Cursor select() {
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db
@@ -80,13 +86,14 @@ public class TodoDB extends SQLiteOpenHelper {
 		return cursor;
 	}
 
+	/**根据主键查询某一条记录，暂未用到 */
 	public Cursor selectById(String id) {
 		SQLiteDatabase db = this.getReadableDatabase();
 		// Cursor cursor = db.rawQuery("select * from person where "
 		// + "name like ? and age=?", new String[]{"%传智%", "4"});
-		Cursor cursor = db.rawQuery("select * from " + TABLE_NAME
-				+ " where "+KEY_ID+"=?", new String[] { id });
-//		Log.v("cursor.getString(0)", cursor.getString(0));
+		Cursor cursor = db.rawQuery("select * from " + TABLE_NAME + " where "
+				+ KEY_ID + "=?", new String[] { id });
+		// Log.v("cursor.getString(0)", cursor.getString(0));
 
 		return cursor;
 	}
@@ -101,7 +108,7 @@ public class TodoDB extends SQLiteOpenHelper {
 	// htid text, //话题信息：ID
 	// anlikey text, //案例信息
 	// time text //保存时间
-	// 增加操作
+	/**增加操作*/
 	public long insert(String fromblogid, String puserid, String pcon,
 			String zb, String atname, String atid, String htname, String htid,
 			String anlikey, String time) {
@@ -122,7 +129,7 @@ public class TodoDB extends SQLiteOpenHelper {
 		return row;
 	}
 
-	// 删除操作
+	/**删除操作*/
 	public void delete(int id) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		String where = KEY_ID + " = ?";
@@ -130,7 +137,7 @@ public class TodoDB extends SQLiteOpenHelper {
 		db.delete(TABLE_NAME, where, whereValue);
 	}
 
-	// 修改操作
+	/**修改操作*/
 	public void update(int id, String fromblogid, String puserid, String pcon,
 			String zb, String atname, String atid, String htname, String htid,
 			String anlikey, String time) {

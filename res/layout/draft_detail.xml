@@ -23,17 +23,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="100dp"
             android:gravity="center_vertical"
-            android:orientation="vertical" 
-            android:textColor="@android:color/black"
-            >
+            android:orientation="vertical"
+            android:textColor="@android:color/black" >
 
             <EditText
                 android:id="@+id/fromblogid"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="转发自微博的ID" 
-                
-                >
+                android:hint="转发自微博的ID" >
             </EditText>
 
             <EditText
@@ -97,8 +94,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" 
-        >
+        android:orientation="horizontal" >
 
         <Button
             android:id="@+id/send_btn"
@@ -114,9 +110,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:text="更新并退出" 
-            android:visibility="visible"
-            />
+            android:text="更新/保存"
+            android:visibility="visible" />
+
+<!--         <Button
+            android:id="@+id/save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:text="保存"
+            android:visibility="visible" /> -->
     </LinearLayout>
 
 </LinearLayout>

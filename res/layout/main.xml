@@ -5,10 +5,8 @@
     android:background="#e6e6e6"
     android:orientation="vertical" >
 
-
-
     <ListView
-        android:id="@+id/bookslist"
+        android:id="@+id/draftlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
@@ -18,5 +16,4 @@
         android:fadingEdge="none"
         android:scrollbars="none" >
     </ListView>
-
 </LinearLayout>
