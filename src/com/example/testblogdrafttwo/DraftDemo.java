@@ -247,6 +247,17 @@ public class DraftDemo extends Activity implements
 		}
 	}
 
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == RESULT_OK) {
+			mCursor.requery();
+			draftList.invalidateViews();
+			myAdapter.notifyDataSetChanged();
+		}
+	}
+
 	/**
 	 * 提交
 	 */

@@ -3,9 +3,12 @@ package com.example.testblogdrafttwo;
 import java.text.SimpleDateFormat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,10 +52,13 @@ public class ListItem extends Activity {
 	private TodoDB draftDB;
 	/**时间格式*/
 	private SimpleDateFormat sDateFormat;
+	/**调用DraftDemo的activity传来的*/
+	Intent intent;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draft_detail);
+		intent=getIntent();
 		sDateFormat = new SimpleDateFormat("MM-dd hh:mm:ss");
 		context = ListItem.this;
 		initId();
@@ -65,6 +71,44 @@ public class ListItem extends Activity {
 	private void setIdClick() {
 		send_btn.setOnClickListener(onClickListener);
 		update_btn.setOnClickListener(onClickListener);
+	}
+
+	/**
+	 * 监听系统的返回键
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			ConfirmDelete();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	};
+
+	/**是否保存为草稿对话框*/
+	private void ConfirmDelete() {
+		new AlertDialog.Builder(context)
+				.setMessage("是否保存草稿箱？")
+				.setPositiveButton("确定",
+						new android.content.DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Toast.makeText(context, "确认保存",
+										Toast.LENGTH_SHORT).show();
+								update();
+							}
+						})
+				.setNegativeButton("取消",
+						new android.content.DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Toast.makeText(context, "放弃保存",
+										Toast.LENGTH_SHORT).show();
+								//更改startActivity为返回上一个activity
+								context.setResult(RESULT_OK, intent);
+								context.finish();
+							}
+						}).show();
 	}
 
 	/**
@@ -97,13 +141,16 @@ public class ListItem extends Activity {
 			Toast.makeText(context, "发送失败", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		//TODO_LXQ 发送
+		// TODO_LXQ 发送
 		draftDB.delete(Integer.parseInt(key_id));
 		Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent();
-		intent.setClass(ListItem.this, DraftDemo.class);
-		startActivity(intent);
-		finish();
+//		Intent intent = new Intent();
+//		intent.setClass(ListItem.this, DraftDemo.class);
+//		startActivity(intent);
+//		finish();
+		//更改startActivity为返回上一个activity
+		context.setResult(RESULT_OK, intent);
+		context.finish();
 	}
 
 	/**
@@ -119,32 +166,36 @@ public class ListItem extends Activity {
 		String htname = htnameEdit.getText().toString();
 		String htid = htidEdit.getText().toString();
 		String anlikey = anlikeyEdit.getText().toString();
-		
-		if (pcon.equals("") ) {
+
+		if (pcon.equals("")) {
 			Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		/**添加时间*/
 		String time = sDateFormat.format(new java.util.Date());
-		draftDB.insert(fromblogid, puserid, pcon, zb, atname, atid, htname, htid, anlikey, time);
+		draftDB.insert(fromblogid, puserid, pcon, zb, atname, atid, htname,
+				htid, anlikey, time);
 		Toast.makeText(this, "Add Successed!", Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent();
-		intent.setClass(ListItem.this, DraftDemo.class);
-		startActivity(intent);
-		finish();
+//		Intent intent = new Intent();
+//		intent.setClass(ListItem.this, DraftDemo.class);
+//		startActivity(intent);
+//		finish();
+		//更改startActivity为返回上一个activity
+		context.setResult(RESULT_OK, intent);
+		context.finish();
 	}
 
 	/**
 	 * 更新
 	 */
 	protected void update() {
-		//主键为空进行保存
+		// 主键为空进行保存
 		if (null == key_id) {
 			Toast.makeText(context, "提交保存", Toast.LENGTH_SHORT).show();
 			save();
 			return;
 		}
-		//主键不为空进行更新
+		// 主键不为空进行更新
 		String fromblogid = fromblogidEdit.getText().toString();
 		String puserid = puseridEdit.getText().toString();
 		String pcon = pconEdit.getText().toString();
@@ -159,15 +210,18 @@ public class ListItem extends Activity {
 			Toast.makeText(this, "内容字段不能为空，请确认后重试", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		//更新时间
+		// 更新时间
 		String time = sDateFormat.format(new java.util.Date());
 		draftDB.update(Integer.parseInt(key_id), fromblogid, puserid, pcon, zb,
 				atname, atid, htname, htid, anlikey, time);
 		Toast.makeText(this, "Update Successed!", Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent();
-		intent.setClass(ListItem.this, DraftDemo.class);
-		startActivity(intent);
-		finish();
+//		Intent intent = new Intent();
+//		intent.setClass(ListItem.this, DraftDemo.class);
+//		startActivity(intent);
+//		finish();
+		//更改startActivity为返回上一个activity
+		context.setResult(RESULT_OK, intent);
+		context.finish();
 	}
 
 	/**
@@ -204,7 +258,7 @@ public class ListItem extends Activity {
 			htidEdit.setText(draftBean.getHtid());
 			anlikeyEdit.setText(draftBean.getAnlikey());
 		}
-		//数据库工具类
+		// 数据库工具类
 		draftDB = new TodoDB(this);
 	}
 
