@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,8 +67,8 @@ public class DraftDemo extends Activity implements
 		draftList.setEmptyView(emptyView);
 	}
 
-	
 	private DraftListAdapter myAdapter;
+
 	/**
 	 * 1 初始化组件 2  增加点击事件
 	 */
@@ -75,10 +76,10 @@ public class DraftDemo extends Activity implements
 		draftDB = new TodoDB(this);
 		mCursor = draftDB.select();
 		draftList = (ListView) findViewById(R.id.draftlist);
-//		draftList.setAdapter(new DraftListAdapter(this, mCursor));
-		myAdapter=new DraftListAdapter(this, mCursor);
+		// draftList.setAdapter(new DraftListAdapter(this, mCursor));
+		myAdapter = new DraftListAdapter(this, mCursor);
 		draftList.setAdapter(myAdapter);
-		
+
 		draftList.setOnItemClickListener(this);
 		draftList.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
@@ -157,8 +158,8 @@ public class DraftDemo extends Activity implements
 		Toast.makeText(this, "点击add，进入增加列表", Toast.LENGTH_SHORT).show();
 		Intent intent = new Intent();
 		intent.setClass(DraftDemo.this, ListItem.class);
-		startActivity(intent);
-		finish();
+		// startActivity(intent);
+		startActivityForResult(intent, 0);
 	}
 
 	/**每一个item的点击事件*/
@@ -175,7 +176,8 @@ public class DraftDemo extends Activity implements
 		draftBean = new DraftBean(mCursor);
 		bundle.putSerializable("draftBean", draftBean);
 		intent.putExtras(bundle);
-		startActivity(intent);
+		// startActivity(intent);
+		startActivityForResult(intent, 0);
 	}
 
 	public class DraftListAdapter extends BaseAdapter {
@@ -238,8 +240,8 @@ public class DraftDemo extends Activity implements
 					String index = v.getTag().toString();
 					Toast.makeText(DraftDemo.this, "发送" + index,
 							Toast.LENGTH_SHORT).show();
-					submit(index) ;
-					
+					submit(index);
+
 				}
 			});
 
@@ -247,10 +249,9 @@ public class DraftDemo extends Activity implements
 		}
 	}
 
-	
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Log.v("DraftDemo", "进入onActivityResult");
 		if (resultCode == RESULT_OK) {
 			mCursor.requery();
 			draftList.invalidateViews();
@@ -265,13 +266,13 @@ public class DraftDemo extends Activity implements
 		if (null == index) {
 			return;
 		}
-		//TODO_LXQ 发送
+		// TODO_LXQ 发送
 		draftDB.delete(Integer.parseInt(index));
 		mCursor.requery();
 		draftList.invalidateViews();
 		myAdapter.notifyDataSetChanged();
 	}
-	
+
 	/**DraftListAdapter中用到*/
 	public final class ViewHolder {
 		public LinearLayout img;

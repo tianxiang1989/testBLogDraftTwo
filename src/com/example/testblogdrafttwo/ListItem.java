@@ -58,7 +58,7 @@ public class ListItem extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draft_detail);
-		intent=getIntent();
+		intent=this.getIntent();
 		sDateFormat = new SimpleDateFormat("MM-dd hh:mm:ss");
 		context = ListItem.this;
 		initId();
@@ -144,10 +144,6 @@ public class ListItem extends Activity {
 		// TODO_LXQ 发送
 		draftDB.delete(Integer.parseInt(key_id));
 		Toast.makeText(context, "发送成功", Toast.LENGTH_SHORT).show();
-//		Intent intent = new Intent();
-//		intent.setClass(ListItem.this, DraftDemo.class);
-//		startActivity(intent);
-//		finish();
 		//更改startActivity为返回上一个activity
 		context.setResult(RESULT_OK, intent);
 		context.finish();
@@ -176,10 +172,6 @@ public class ListItem extends Activity {
 		draftDB.insert(fromblogid, puserid, pcon, zb, atname, atid, htname,
 				htid, anlikey, time);
 		Toast.makeText(this, "Add Successed!", Toast.LENGTH_SHORT).show();
-//		Intent intent = new Intent();
-//		intent.setClass(ListItem.this, DraftDemo.class);
-//		startActivity(intent);
-//		finish();
 		//更改startActivity为返回上一个activity
 		context.setResult(RESULT_OK, intent);
 		context.finish();
@@ -215,10 +207,6 @@ public class ListItem extends Activity {
 		draftDB.update(Integer.parseInt(key_id), fromblogid, puserid, pcon, zb,
 				atname, atid, htname, htid, anlikey, time);
 		Toast.makeText(this, "Update Successed!", Toast.LENGTH_SHORT).show();
-//		Intent intent = new Intent();
-//		intent.setClass(ListItem.this, DraftDemo.class);
-//		startActivity(intent);
-//		finish();
 		//更改startActivity为返回上一个activity
 		context.setResult(RESULT_OK, intent);
 		context.finish();
