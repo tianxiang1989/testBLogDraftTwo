@@ -59,6 +59,7 @@ public class ListItem extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.draft_detail);
 		intent=this.getIntent();
+		//日期格式
 		sDateFormat = new SimpleDateFormat("MM-dd hh:mm:ss");
 		context = ListItem.this;
 		initId();
@@ -249,5 +250,4 @@ public class ListItem extends Activity {
 		// 数据库工具类
 		draftDB = new TodoDB(this);
 	}
-
 }

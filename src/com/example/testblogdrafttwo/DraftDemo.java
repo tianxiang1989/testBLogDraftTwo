@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
@@ -29,7 +29,7 @@ import android.widget.Toast;
  * 2014年6月22日
  */
 public class DraftDemo extends Activity implements
-		AdapterView.OnItemClickListener {
+		OnItemClickListener {
 	/**数据库工具类*/
 	private TodoDB draftDB;
 	private Cursor mCursor;
@@ -39,6 +39,7 @@ public class DraftDemo extends Activity implements
 	String deleteIndex;
 	protected final static int MENU_ADD = Menu.FIRST;
 	protected final static int MENU_REFRESH = Menu.FIRST + 1;
+	/**等效于DraftDemo.this*/
 	private Activity context;
 
 	/**Called when the activity is starting*/
@@ -180,6 +181,9 @@ public class DraftDemo extends Activity implements
 		startActivityForResult(intent, 0);
 	}
 
+	/**
+	 * 列表adapter
+	 */
 	public class DraftListAdapter extends BaseAdapter {
 		private Cursor mCursor;
 		private LayoutInflater mInflater;
